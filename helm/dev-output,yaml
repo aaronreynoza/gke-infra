@@ -1,0 +1,68 @@
+---
+# Source: base-chart/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+# Source: base-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "dev-telus-app"
+  namespace: dev
+spec:
+  type: ClusterIP
+  # Uncomment the below line to create a Headless Service
+  # clusterIP: None
+  selector:
+    app: "dev-telus-app"
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+# Source: base-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "dev-telus-app"
+  namespace: dev
+  labels:
+    app: "dev-telus-app"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "dev-telus-app"
+  template:
+    metadata:
+      labels:
+        app: "dev-telus-app"
+    spec:
+      containers:
+      - name: "dev-telus-app"
+        image: "us-west1-docker.pkg.dev/cloud-app-test-359415/test-app:dev"
+        ports:
+        - containerPort: 3000
+---
+# Source: base-chart/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "dev-ingress"
+  namespace: dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: test-app
+            port:
+              number: 80

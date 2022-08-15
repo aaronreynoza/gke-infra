@@ -1,0 +1,7 @@
+namespace: prod
+
+replicas: 3
+
+image:
+  name: "us-west1-docker.pkg.dev/cloud-app-test-359415/test-app/test-app"
+  tag: "prod"

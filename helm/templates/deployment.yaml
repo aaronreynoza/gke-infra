@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.namespace }}-telus-app"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: "{{ .Values.namespace }}-telus-app"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ .Values.namespace }}-telus-app"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.namespace }}-telus-app"
+    spec:
+      containers:
+      - name: "{{ .Values.namespace }}-telus-app"
+        image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.deployment.port }}
